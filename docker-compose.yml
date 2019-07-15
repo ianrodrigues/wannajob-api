@@ -6,13 +6,23 @@ volumes:
 
 services:
   django:
-    build: .
+    build:
+      context: .
+      target: development
     volumes:
       - .:/usr/local/app
-    ports:
-      - 8000:8000
     depends_on:
       - database
+
+  nginx:
+    image: nginx:1.17-alpine
+    volumes:
+      - ./docker/nginx:/etc/nginx/conf.d
+      - ./static:/usr/local/app/static
+    ports:
+      - 8000:80
+    depends_on:
+      - django
 
   database:
     image: postgres:11-alpine
